@@ -1,0 +1,3 @@
+pianosy_shell: '/usr/local/bin/piano_shell'
+pianosy_domain: 'localhost'
+pianosy_debug: false

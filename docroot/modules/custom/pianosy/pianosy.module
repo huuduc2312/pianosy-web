@@ -1,0 +1,132 @@
+<?php
+
+use Gitlab\Client;
+use Drupal\Core\Url;
+use Gitlab\Model\Project;
+use Drupal\Core\Messenger;
+use Drupal\drd\Entity\Host;
+use \Drupal\node\Entity\Node;
+use \Drupal\user\Entity\User;
+use Drupal\pianosy\PianosySshCommand;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Ajax\ReplaceCommand;
+use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
+function pianosy_page_attachments(array &$attachments)
+{
+  $attachments['#attached']['library'][] = 'pianosy/pianosy';
+}
+
+/**
+ * Undocumented function
+ *
+ * @return void
+ */
+function pianosy_ssh2($host, $executable, $command)
+{
+  $pianosy_ssh = new PianosySshCommand();
+  $pianosy_ssh->setHost($host);
+  $pianosy_ssh->setCommand($command);
+  $pianosy_ssh->execute();
+  $output = $pianosy_ssh->getOutput();
+  return $output;
+}
+
+/**
+ * Undocumented function
+ *
+ * @return void
+ */
+function pianosy_load_drd_hosts($conditions = null)
+{
+  $query = \Drupal::entityQuery('drd_host');
+  $query->condition('status', 1);
+  if (!empty($conditions)) {
+    foreach($conditions as $condition) {
+      if (isset($condition['op'])) {
+        $query->condition($condition['key'], $condition['value'], $condition['op']);
+      }
+      else {
+        $query->condition($condition['key'], $condition['value']);
+      }
+    }
+  }
+  $entity_ids = $query->execute();
+  $drd_hosts = \Drupal::entityTypeManager()->getStorage('drd_host')->loadMultiple($entity_ids);
+  return $drd_hosts;
+}
+
+/**
+ * Undocumented function
+ *
+ * @return void
+ */
+function pianosy_get_hosts()
+{
+  $drd_hosts = pianosy_load_drd_hosts();
+  $hosts = array();
+  foreach ($drd_hosts as $drd_host) {
+    $hosts[$drd_host->id()] = $drd_host->name->value;
+  }
+  return $hosts;
+}
+
+/**
+ * Undocumented function
+ *
+ * @return void
+ */
+function pianosy_get_hosts_by_type($host_type)
+{
+  $conditions = [
+    [
+      'key' => 'field_host_type',
+      'value' => $host_type
+    ]
+  ];
+  $drd_hosts = pianosy_load_drd_hosts($conditions);
+  $hosts = array();
+  foreach ($drd_hosts as $drd_host) {
+    $hosts[$drd_host->id()] = $drd_host->name->value;
+  }
+  return $hosts;
+}
+
+/**
+ * Undocumented function
+ *
+ * @param [type] $executable
+ * @param array $params
+ * @return void
+ */
+function pianosy_generate_ssh_command($executable, $params = array()) {
+  $command = $executable;
+  $text_params = ['-n', '-i', '-j'];
+  foreach ($params as $key => $value) {
+    if (in_array($key, $text_params)) {
+      $command .= ' ' . $key . ' "' . $value . '"';
+    }
+    else {
+      $command .= ' ' . $key . ' ' . $value;
+    }
+  }
+  return $command;
+}
+/**
+ * Undocumented function
+ *
+ * @param [type] $host
+ * @param [type] $executable
+ * @param [type] $params
+ * @param [type] $msg_title
+ * @return void
+ */
+function pianosy_execute_ssh_command($host, $executable, $params, $msg_title) {
+  $command = pianosy_generate_ssh_command($executable, $params);
+  \Drupal::logger('pianosy command')->notice($command);
+  $output = pianosy_ssh2($host, $executable, $command);  
+  \Drupal::logger($msg_title)->notice($output);
+  return $output;
+}

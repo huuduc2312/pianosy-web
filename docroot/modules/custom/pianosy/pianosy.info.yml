@@ -1,0 +1,6 @@
+name: Pianosy
+type: module
+description: 'Run shell'
+package: Pianosy
+core: 8.x
+configure: pianosy.form

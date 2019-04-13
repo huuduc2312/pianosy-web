@@ -1,0 +1,7 @@
+pianosy.form:
+  path: '/admin/config/pianosy'
+  defaults:
+    _form: 'Drupal\pianosy\Form\PianosyFormSetting'
+    _title: 'Pianosy Config'
+  requirements:
+    _permission: 'administer site configuration'
