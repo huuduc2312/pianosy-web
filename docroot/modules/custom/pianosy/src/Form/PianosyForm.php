@@ -91,7 +91,7 @@ class PianosyForm extends FormBase
     ];
     $drd_hosts = pianosy_load_drd_hosts($conditions);
     $host = reset($drd_hosts);
-    $params = array("bua-yeu-bich-phuong-piano-sheet-trang-1.jpg");
+    $params = array();
 
     $msg_title = 'pianosy execute';
     $output = pianosy_execute_ssh_command($host, $executable, $params, $msg_title);
