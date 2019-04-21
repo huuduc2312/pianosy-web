@@ -23,10 +23,10 @@
 # Ignore .env files as they are personal
 /.env
 
-# Custom
-/docroot/core
-/docroot/sites/default
-/docroot/modules/contrib
-/docroot/modules/contrib/themes/contrib/
-/docroot/profiles/contrib/
-/docroot/libraries/
+# # Custom
+# /docroot/core
+# /docroot/sites/default
+# /docroot/modules/contrib
+# /docroot/modules/contrib/themes/contrib/
+# /docroot/profiles/contrib/
+# /docroot/libraries/
