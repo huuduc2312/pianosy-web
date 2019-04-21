@@ -1,3 +1,0 @@
-views.filter.drd_cores:
-  type: views.filter.many_to_one
-  label: 'DRD Cores'
