@@ -1,4 +1,0 @@
-services:
-  drd_migrate.import:
-    class: Drupal\drd_migrate\Import
-    arguments: []

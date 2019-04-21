@@ -1,3 +1,0 @@
-views.filter.drd_hosts:
-  type: views.filter.many_to_one
-  label: 'DRD Hosts'
