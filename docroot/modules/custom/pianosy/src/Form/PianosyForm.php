@@ -68,6 +68,7 @@ class PianosyForm extends FormBase
     $values = $form_state->getValues();
     $fid = $values['sheet_img']; 
     $file_obj = file_load(reset($fid));
+    var_dump($file_obj);exit;
 
     // print_r(reset($file_obj)); exit;
     $this->pianosy_execute($values);
